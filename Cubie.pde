@@ -1,33 +1,31 @@
 class Cubie {
+  final color[] colors = {
+    //Yellow Red Green
+    #FFFF00, #FF0000, #00FF00, 
+    //White Orange Blue
+    #FFFFFF, #FFA500, #0000FF 
+  };
 
   PVector coor;
   PVector yDirection;
   PVector xDirection;
-  boolean highlight;
 
-  Cubie(float i, float j, float k, boolean highlight) {
+  Cubie(float i, float j, float k) {
     coor = new PVector(i, j, k);
     yDirection = new PVector(0, -1, 0);
-    xDirection = new PVector(-1, 0, 0);
-    this.highlight = highlight;
+    xDirection = new PVector(1, 0, 0);
   }
 
   void display() {
     pushMatrix();
     translate(coor.x*scale, coor.y*scale, coor.z*scale);
+    //Draw the edges of each cubie
     strokeWeight(5);
     stroke(0);
-    if (highlight) strokeWeight(15);
     noFill();
     box(scale);
-    if (highlight) {
-      stroke(100, 0, 0);
-      line(0, 0, 0, yDirection.x*scale, yDirection.y*scale, yDirection.z*scale);
-      stroke(0, 100, 0);
-      line(0, 0, 0, xDirection.x*scale, xDirection.y*scale, xDirection.z*scale);
-      stroke(0);
-    }
-
+    //Each cubie as it's own XYZ system, X points right (red face), Y points up (yellow face)
+    //Calculate the Z axis using vector product and then rotate the space making shure that the axises match the one of the cubie
     PVector zDirection = yDirection.cross(xDirection);
     PMatrix3D matrix = new PMatrix3D(
       xDirection.x, yDirection.x, zDirection.x, 0, 
@@ -37,13 +35,6 @@ class Cubie {
       );
     applyMatrix(matrix);
 
-    if (highlight) {
-      stroke(255, 0, 0);
-      line(10, 0, 10, 10, scale, 10);
-      stroke(0, 255, 0);
-      line(0, 10, 10, scale, 10, 10);
-      stroke(0);
-    }
     displayFaces();
     popMatrix();
   }
@@ -57,117 +48,118 @@ class Cubie {
     noStroke();
     beginShape(QUAD);
 
-    //Up
+    //Up (yellow)
     fill(colors[0]);
-    //noFill();
     vertex(-radius, radius, -radius);
     vertex(radius, radius, -radius);
     vertex(radius, radius, radius);
     vertex(-radius, radius, radius);
-    //if (coor.x == 1 && coor.y == 0 && coor.z == 1) {
-    //  endShape();
-    //  pushMatrix();
-    //  rotateX(HALF_PI);
-    //  fill(0);
-    //  text("U", 0, radius/2, radius*1.1);
-    //  popMatrix();
-    //  beginShape();
-    //}
+    if (coor.x == 0 && coor.y == -1 && coor.z == 0) {
+      endShape();
+      pushMatrix();
+      rotateX(HALF_PI);
+      fill(0);
+      text("U", 0, radius/2, -radius*1.1);
+      popMatrix();
+      beginShape(QUAD);
+    }
 
-    //Down
+    //Down (white)
     fill(colors[3]);
-    //noFill();
     vertex(-radius, -radius, -radius);
     vertex(radius, -radius, -radius);
     vertex(radius, -radius, radius);
     vertex(-radius, -radius, radius);
-    //if (coor.x == 1 && coor.y == 2 && coor.z == 1) {
-    //  endShape();
-    //  pushMatrix();
-    //  rotateX(-HALF_PI);
-    //  fill(0);
-    //  text("D", 0, radius/2, radius*1.1);
-    //  popMatrix();
-    //  beginShape();
-    //}
+    if (coor.x == 0 && coor.y == 1 && coor.z == 0) {
+      endShape();
+      pushMatrix();
+      rotateX(-HALF_PI);
+      fill(0);
+      text("D", 0, radius/2, -radius*1.1);
+      popMatrix();
+      beginShape(QUAD);
+    }
 
-    //Left
+    //Left (orange)
     fill(colors[1]);
-    //noFill();
-    vertex(radius, -radius, -radius);
-    vertex(radius, radius, -radius);
-    vertex(radius, radius, radius);
-    vertex(radius, -radius, radius);
-    //if (coor.x == 0 && coor.y == 1 && coor.z == 1) {
-    //  endShape();
-    //  pushMatrix();
-    //  rotateY(-HALF_PI);
-    //  fill(0);
-    //  text("L", 0, radius/2, radius*1.1);
-    //  popMatrix();
-    //  beginShape();
-    //}
+    vertex(-radius, -radius, -radius);
+    vertex(-radius, radius, -radius);
+    vertex(-radius, radius, radius);
+    vertex(-radius, -radius, radius);
+    if (coor.x == -1 && coor.y == 0 && coor.z == 0) {
+      endShape();
+      pushMatrix();
+      rotateY(-HALF_PI);
+      rotateX(PI);
+      fill(0);
+      text("L", 0, radius/2, -radius*1.1);
+      popMatrix();
+      beginShape(QUAD);
+    }
 
-    //Right
+    //Right (red)
     fill(colors[4]);
-    //noFill();
-    vertex(-radius, -radius, -radius);
-    vertex(-radius, radius, -radius);
-    vertex(-radius, radius, radius);
-    vertex(-radius, -radius, radius);
-    //if (coor.x == 2 && coor.y == 1 && coor.z == 1) {
-    //  endShape();
-    //  pushMatrix();
-    //  rotateY(HALF_PI);
-    //  fill(0);
-    //  text("R", 0, radius/2, radius*1.1);
-    //  popMatrix();
-    //  beginShape();
-    //}
-
-    //Front
-    fill(colors[2]);
-    //noFill();
-    vertex(-radius, -radius, -radius);
-    vertex(-radius, radius, -radius);
-    vertex(radius, radius, -radius);
     vertex(radius, -radius, -radius);
-    //if (coor.x == 1 && coor.y == 1 && coor.z == 2) {
-    //  endShape();
-    //  fill(0);
-    //  text("F", 0, radius/2, radius*1.1);
-    //  beginShape();
-    //}
+    vertex(radius, radius, -radius);
+    vertex(radius, radius, radius);
+    vertex(radius, -radius, radius);
+    if (coor.x == 1 && coor.y == 0 && coor.z == 0) {
+      endShape();
+      pushMatrix();
+      rotateY(HALF_PI);
+      rotateX(PI);
+      fill(0);
+      text("R", 0, radius/2, -radius*1.1);
+      popMatrix();
+      beginShape(QUAD);
+    }
 
-    //Back
-    fill(colors[5]);
-    //noFill();
+    //Front (green)
+    fill(colors[2]);
     vertex(-radius, -radius, radius);
     vertex(-radius, radius, radius);
     vertex(radius, radius, radius);
     vertex(radius, -radius, radius);
-    //if (coor.x == 1 && coor.y == 1 && coor.z == 0) {
-    //  endShape();
-    //  pushMatrix();
-    //  fill(0);
-    //  rotateY(PI);
-    //  text("B", 0, radius/2, radius*1.1);
-    //  popMatrix();
-    //  beginShape();
-    //}
+    if (coor.x == 0 && coor.y == 0 && coor.z == 1) {
+      endShape();
+      pushMatrix();
+      fill(0);
+      rotateZ(PI);
+      rotateY(PI);
+      text("F", 0, radius/2, -radius*1.1);
+      popMatrix();
+      beginShape(QUAD);
+    }
+
+    //Back (blue)
+    fill(colors[5]);
+    vertex(-radius, -radius, -radius);
+    vertex(-radius, radius, -radius);
+    vertex(radius, radius, -radius);
+    vertex(radius, -radius, -radius);
+    if (coor.x == 0 && coor.y == 0 && coor.z == -1) {
+      endShape();
+      pushMatrix();
+      fill(0);
+      rotateZ(PI);
+      text("B", 0, radius/2, -radius*1.1);
+      popMatrix();
+      beginShape(QUAD);
+    }
 
     endShape();
   }
 
+//To avoid problems from E-4 or things like that during calculations
   void roundVectors() {
     coor.x = round(coor.x);
     coor.y = round(coor.y);
     coor.z = round(coor.z);
-    yDirection.x = round(yDirection.x);
-    yDirection.y = round(yDirection.y);
-    yDirection.z = round(yDirection.z);
     xDirection.x = round(xDirection.x);
     xDirection.y = round(xDirection.y);
     xDirection.z = round(xDirection.z);
+    yDirection.x = round(yDirection.x);
+    yDirection.y = round(yDirection.y);
+    yDirection.z = round(yDirection.z);
   }
 }

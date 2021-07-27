@@ -3,79 +3,89 @@ class Cube {
   float translation;
   int dimension;
   Cubie[][][] cubies;
+  boolean rotating = false;
+  Move move = null;
 
 
   Cube(int dimension) {
     this.dimension = dimension;
+    move = new Move();
     cubies = new Cubie[dimension][dimension][dimension];
     translation = (dimension-1)/2.;
     for (float i = -translation; i <= translation; i++) {
       for (float j = -translation; j <= translation; j++) {
         for (float k = -translation; k <= translation; k++) {
-          cubies[fromCenterToCorner(i)][fromCenterToCorner(j)][fromCenterToCorner(k)] = new Cubie(i, j, k, /*(i==1 && j==-1 && k==1)*/false);
+          cubies[fromCenterToCorner(i)][fromCenterToCorner(j)][fromCenterToCorner(k)] = new Cubie(i, j, k);
         }
       }
     }
   }
 
+//Display the cube and take care of the state of animation
   void display() {
     for (float i = -translation; i <= translation; i++) {
       for (float j = -translation; j <= translation; j++) {
         for (float k = -translation; k <= translation; k++) {
+          pushMatrix();
+          if (move.rotating) {
+            move.update();
+            //If this is one of the cubies to be rotated (make zero the coor not relative to the axis of rotation and check the layer
+            PVector v = new PVector(i*move.axis.x, j*move.axis.y, k*move.axis.z);
+            if (v.x == move.translationFactor.x && v.y == move.translationFactor.y && v.z == move.translationFactor.z) {
+              rotate(move.angle, move.axis.x, move.axis.y, move.axis.z);
+            }
+          }
           get(i, j, k).display();
+          popMatrix();
         }
       }
     }
   }
-
-  void move(String code) {
-
-    //Get the axis of rotation given the code
-    int formattedCode;
-    if ("LlRr".contains(code)) {
-      formattedCode = 0;
-    } else if ("UuDd".contains(code)) {
-      formattedCode = 1;
-    } else if ("FfBb".contains(code)) {
-      formattedCode = 2;
-    } else return;
-    PVector axis = axises[formattedCode];
-
-    //Get the direction of rotation given the case
-    int direction = code.toLowerCase().equals(code) ? -1 : 1;
-
-    //get the translation to apply to the 0 element of the index (e.g. to cover the cases (i, j, 2)) 
-    PVector translationFactor;
-    if ("DdFfRr".contains(code)) {
-      translationFactor = axis;
-      //switch direction if needed
-      direction *= -1;
-    } else {
-      translationFactor = PVector.mult(axis, -1);
-    }
-
-    for (float i = -translation; i <= translation; i++) {
-      for (float j = -translation; j <= translation; j++) {
-        PVector coor = new PVector();
-        if (formattedCode == 0) coor = new PVector(0, i, j).add(translationFactor);
-        else if (formattedCode == 1) coor = new PVector(i, 0, j).add(translationFactor);
-        else if (formattedCode == 2) coor = new PVector(i, j, 0).add(translationFactor);
-        
-        Cubie cubie = get(coor.x, coor.y, coor.z);
-        PMatrix3D rotation = getRotation(formattedCode, direction);
-        rotation.mult(cubie.coor, cubie.coor);
-        rotation.mult(cubie.xDirection, cubie.xDirection);
-        rotation.mult(cubie.yDirection, cubie.yDirection);
-        cubie.roundVectors();
-      }
-    }
+  
+//Start a single move animation
+  void animate(char code) {    
+    if (move.rotating) return;
+    move = new Move(code);
+    move.setCube(this);
+    move.start();
+  }
+  
+//Perform a single move instantaneously
+  void move(char code){
+    if(move.rotating) return;
+    move = new Move(code);
+    move.setCube(this);
+    move.perform();
   }
 
+//Get the cubie at a certain position using the centered system
   Cubie get(float i, float j, float k) {
-    return cubies[round(i+(dimension-1)/2.)][round(j+(dimension-1)/2.)][round(k+(dimension-1)/2.)];
+    return cubies[fromCenterToCorner(i)][fromCenterToCorner(j)][fromCenterToCorner(k)];
   }
-
+  
+//Switch from centered system to corner (used to index 3d array)
   int fromCenterToCorner(float i) {
     return round(i+(dimension-1)/2.);
+  }
+
+//Update the position of the cubies in the 3d array according to their position on the screen 
+  void updateCubies() {
+    Cubie[][][] newCubies = new Cubie[dimension][dimension][dimension];
+    for (int i = 0; i < dimension; i++) {
+      for (int j = 0; j < dimension; j++) {
+        for (int k = 0; k < dimension; k++) {
+          Cubie cubie = cubies[i][j][k];
+          newCubies[fromCenterToCorner(cubie.coor.x)][fromCenterToCorner(cubie.coor.y)][fromCenterToCorner(cubie.coor.z)] = cubie;
+        }
+      }
+    }
+    cubies = newCubies;
+  }
+    
+//Shuffle the cube by a given sequence instantaneously
+  void shuffle(String sequence) {
+    for(int i = 0; i < sequence.length(); i++){
+      move(sequence.charAt(i));
+    }
   }
 }
