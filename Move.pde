@@ -12,7 +12,7 @@ class Move {
   int formattedCode;
   boolean rotating = false;
   float angle = 0;
-  float speed = 0.002;
+  float speed = 0.05;
   int direction;
   String code = "";
   Cube cube;
@@ -79,15 +79,15 @@ class Move {
         else if (formattedCode == 1) coor = new PVector(i, 0, j).add(translationFactor);
         else if (formattedCode == 2) coor = new PVector(i, j, 0).add(translationFactor);
         Cubie cubie = cube.get(coor.x, coor.y, coor.z);
-        
+
         PMatrix3D rotation = getRotation(formattedCode, direction*HALF_PI);
-        
+
         //Apply the rotation matrix to the coor of the cubie
         rotation.mult(cubie.coor, cubie.coor);
         //Apply the rotation matrix to the axises of the cubie to change it's orientation
         rotation.mult(cubie.xDirection, cubie.xDirection);
         rotation.mult(cubie.yDirection, cubie.yDirection);
-        
+
         cubie.roundVectors();
       }
     }

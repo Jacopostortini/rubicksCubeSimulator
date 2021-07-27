@@ -21,7 +21,7 @@ class Cube {
     }
   }
 
-//Display the cube and take care of the state of animation
+  //Display the cube and take care of the state of animation
   void display() {
     for (float i = -translation; i <= translation; i++) {
       for (float j = -translation; j <= translation; j++) {
@@ -41,34 +41,34 @@ class Cube {
       }
     }
   }
-  
-//Start a single move animation
+
+  //Start a single move animation
   void animate(char code) {    
     if (move.rotating) return;
     move = new Move(code);
     move.setCube(this);
     move.start();
   }
-  
-//Perform a single move instantaneously
-  void move(char code){
-    if(move.rotating) return;
+
+  //Perform a single move instantaneously
+  void move(char code) {
+    if (move.rotating) return;
     move = new Move(code);
     move.setCube(this);
     move.perform();
   }
 
-//Get the cubie at a certain position using the centered system
+  //Get the cubie at a certain position using the centered system
   Cubie get(float i, float j, float k) {
     return cubies[fromCenterToCorner(i)][fromCenterToCorner(j)][fromCenterToCorner(k)];
   }
-  
-//Switch from centered system to corner (used to index 3d array)
+
+  //Switch from centered system to corner (used to index 3d array)
   int fromCenterToCorner(float i) {
     return round(i+(dimension-1)/2.);
   }
 
-//Update the position of the cubies in the 3d array according to their position on the screen 
+  //Update the position of the cubies in the 3d array according to their position on the screen 
   void updateCubies() {
     Cubie[][][] newCubies = new Cubie[dimension][dimension][dimension];
     for (int i = 0; i < dimension; i++) {
@@ -81,11 +81,25 @@ class Cube {
     }
     cubies = newCubies;
   }
-    
-//Shuffle the cube by a given sequence instantaneously
+
+  //Shuffle the cube by a given sequence instantaneously
   void shuffle(String sequence) {
-    for(int i = 0; i < sequence.length(); i++){
+    for (int i = 0; i < sequence.length(); i++) {
       move(sequence.charAt(i));
     }
+  }
+
+  //Clone the cube
+  Cube clone() {
+    Cube clone = new Cube(dimension);
+    for (int i = 0; i < dimension; i++) {
+      for (int j = 0; j < dimension; j++) {
+        for (int k = 0; k < dimension; k++) {
+          clone.cubies[i][j][k] = cubies[i][j][k].clone();
+        }
+      }
+    }
+    
+    return clone; 
   }
 }

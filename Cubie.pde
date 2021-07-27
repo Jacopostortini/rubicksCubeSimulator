@@ -20,7 +20,7 @@ class Cubie {
     pushMatrix();
     translate(coor.x*scale, coor.y*scale, coor.z*scale);
     //Draw the edges of each cubie
-    strokeWeight(5);
+    strokeWeight(scale/10);
     stroke(0);
     noFill();
     box(scale);
@@ -150,7 +150,7 @@ class Cubie {
     endShape();
   }
 
-//To avoid problems from E-4 or things like that during calculations
+  //To avoid problems from E-4 or things like that during calculations
   void roundVectors() {
     coor.x = round(coor.x);
     coor.y = round(coor.y);
@@ -161,5 +161,13 @@ class Cubie {
     yDirection.x = round(yDirection.x);
     yDirection.y = round(yDirection.y);
     yDirection.z = round(yDirection.z);
+  }
+  
+  Cubie clone(){
+    Cubie clone = new Cubie(coor.x, coor.y, coor.z);
+    clone.xDirection = new PVector(xDirection.x, xDirection.y, xDirection.z);
+    clone.yDirection = new PVector(yDirection.x, yDirection.y, yDirection.z);
+    
+    return clone;
   }
 }
