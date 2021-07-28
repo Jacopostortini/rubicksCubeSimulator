@@ -33,7 +33,7 @@ class Unit {
         child.genes[i] = parent.genes[i];
       }
     }
-    child.mutate(0.1);
+    child.mutate(0.5);
     return child;
   }
 
@@ -56,11 +56,8 @@ class Unit {
       for (int j = 0; j < cube.dimension; j++) {
         for (int k = 0; k < cube.dimension; k++) {
           Cubie cubie = cube.cubies[i][j][k];
-          if (cubie.xDirection.x == 1 && cubie.xDirection.y == 0 && cubie.xDirection.z == 0) {
-            fitness += 1;
-          }
-          if (cubie.yDirection.x == 0 && cubie.yDirection.y == -1 && cubie.yDirection.z == 0) {
-            fitness += 1;
+          if(cubie.isCorrect() && !cubie.isCenter()){
+            if(cubie.coor.y == 1) fitness += 1;
           }
         }
       }
@@ -77,10 +74,10 @@ class Unit {
     for (char c : genes) s += c;
     return s;
   }
-  
-  boolean equals(Unit other){
-    for(int i = 0; i < moves; i++){
-      if(genes[i] != other.genes[i]) return false;
+
+  boolean equals(Unit other) {
+    for (int i = 0; i < moves; i++) {
+      if (genes[i] != other.genes[i]) return false;
     }
     return true;
   }

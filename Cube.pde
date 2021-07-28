@@ -99,7 +99,7 @@ class Cube {
         }
       }
     }
-    
-    return clone; 
+
+    return clone;
   }
 }

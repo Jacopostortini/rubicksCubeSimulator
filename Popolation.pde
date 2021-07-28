@@ -46,6 +46,20 @@ class Population {
       probabilities[i] = fitnesses[i]/sum;
     }
   }
+  
+  float getAverageFitness(){
+    float sum = 0;
+    for (float fitness : fitnesses) sum += fitness;
+    return sum / fitnesses.length;
+  }
+  
+  float getVariance(){
+    float av = getAverageFitness();
+    float squaredVariance = 0;
+    for (float fitness : fitnesses) squaredVariance += pow(av-fitness, 2)/fitnesses.length;
+    
+    return sqrt(squaredVariance);
+  }
 
   Unit getBestFit() {
     float max = -1;

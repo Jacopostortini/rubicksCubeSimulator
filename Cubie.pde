@@ -21,6 +21,8 @@ class Cubie {
     translate(coor.x*scale, coor.y*scale, coor.z*scale);
     //Draw the edges of each cubie
     strokeWeight(scale/10);
+    if (isCorrect() && !isCenter()) strokeWeight(scale/3);
+
     stroke(0);
     noFill();
     box(scale);
@@ -41,10 +43,7 @@ class Cubie {
 
   void displayFaces() {
     float radius = 0.5 * scale;
-    float fontSize = scale * 3 / 5;
-
     textSize(fontSize);
-    textAlign(CENTER);
     noStroke();
     beginShape(QUAD);
 
@@ -162,12 +161,25 @@ class Cubie {
     yDirection.y = round(yDirection.y);
     yDirection.z = round(yDirection.z);
   }
-  
-  Cubie clone(){
+
+  Cubie clone() {
     Cubie clone = new Cubie(coor.x, coor.y, coor.z);
     clone.xDirection = new PVector(xDirection.x, xDirection.y, xDirection.z);
     clone.yDirection = new PVector(yDirection.x, yDirection.y, yDirection.z);
-    
+
     return clone;
+  }
+
+  boolean isCenter() {
+    if (equalsVector(coor, new PVector(0, 0, 0))) return true;
+    PVector absCoor = new PVector(abs(coor.x), abs(coor.y), abs(coor.z));
+    if (equalsVector(absCoor, new PVector(1, 0, 0))) return true;
+    if (equalsVector(absCoor, new PVector(0, 1, 0))) return true;
+    if (equalsVector(absCoor, new PVector(0, 0, 1))) return true;
+    return false;
+  }
+
+  boolean isCorrect() {
+    return equalsVector(xDirection, new PVector(1, 0, 0)) && equalsVector(yDirection, new PVector(0, -1, 0));
   }
 }
