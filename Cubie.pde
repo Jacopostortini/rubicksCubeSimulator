@@ -21,7 +21,7 @@ class Cubie {
     translate(coor.x*scale, coor.y*scale, coor.z*scale);
     //Draw the edges of each cubie
     strokeWeight(scale/10);
-    if (isCorrect() && !isCenter()) strokeWeight(scale/3);
+    //if (isCorrect() && !isCenter()) strokeWeight(scale/3);
 
     stroke(0);
     noFill();

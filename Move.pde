@@ -12,7 +12,7 @@ class Move {
   int formattedCode;
   boolean rotating = false;
   float angle = 0;
-  float speed = 0.05;
+  float speed = 0.005;
   int direction;
   String code = "";
   Cube cube;

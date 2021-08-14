@@ -3,7 +3,6 @@ class Cube {
   float translation;
   int dimension;
   Cubie[][][] cubies;
-  boolean rotating = false;
   Move move = null;
 
 
